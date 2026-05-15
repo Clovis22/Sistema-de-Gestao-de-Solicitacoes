@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>SISTEMA DE GESTÃO DE SOLICITAÇÕES - SGS</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <h1>SISTEMA DE GESTÃO DE SOLICITAÇÕES - SGS</h1>
+
+    <div class="filtros">
+
+        <button onclick="irParaCadastro()">
+            Cadastro
+        </button>
+
+        <select id="statusFiltro">
+            <option value="">Status</option>
+        </select>
+
+        <select id="categoriasFiltro">
+            <option value="">Categorias</option>
+        </select>
+
+        <input type="date" id="dataInicial">
+
+        <input type="date" id="dataFinal">
+
+        <button onclick="filtrar()">
+            Filtrar
+        </button>
+
+    </div>
+
+    <table>
+
+        <thead>
+            <tr>
+
+                <th>NOME SOLICITANTE</th>
+                <th>CPF/CNPJ</th>
+                <th>NOME CATEGORIA</th>
+                <th>STATUS</th>
+                <th>VALOR</th>
+                <th>OPÇÕES</th>
+
+            </tr>
+        </thead>
+
+        <tbody id="tbodySolicitacoes">
+
+        </tbody>
+
+    </table>
+
+    <script src="js/apiSGS.js"></script>
+    <script src="js/index.js"></script>
+
+</body>
+</html>
