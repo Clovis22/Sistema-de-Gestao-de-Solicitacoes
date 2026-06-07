@@ -2,6 +2,7 @@ window.onload = async () => {
     carregarSolicitantes();
     carregarCategorias();
     carregarStatus();
+    formatarCampoValor();
 };
 
 document.getElementById("formularioCadastro").addEventListener("submit", async function(e) {
@@ -18,28 +19,35 @@ document.getElementById("formularioCadastro").addEventListener("submit", async f
 
         descricao: document.getElementById("descricao").value,
 
-        valor: document.getElementById("valor").value,
+        valor: parseFloat(document.getElementById("valor").value.replace(/\./g, "").replace(",", ".")),
 
         dataSolicitacao: document.getElementById("data").value
 
     };
+    
+    if(body.solicitanteId == "" || body.categoriaId == "" || body.statusId == "" || 
+       body.descricao == "" || body.valor <= 0 || body.dataSolicitacao == "") {
+       alert("Não é possível cadastrar, pois alguns campos estão vazios ou com valores negativos ou igual a zero!");
+    }else {
 
-    await fetch(`${API}/cadastrar`, {
+        await fetch(`${API}`, {
 
-        method: "POST",
+            method: "POST",
 
-        headers: {
-            "Content-Type":
-            "application/json"
-        },
+            headers: {
+                "Content-Type":
+                "application/json"
+            },
 
-        body: JSON.stringify(body)
+            body: JSON.stringify(body)
 
-    });
+        });
 
-    alert("Solicitação cadastrado com sucesso!");
+        alert("Solicitação cadastrado com sucesso!");
 
-    window.location.href = "index.html";
+        window.location.href = "index.html";
+
+    }
 });
 
 async function carregarSolicitantes() {
@@ -123,6 +131,28 @@ async function carregarStatus() {
     }catch(error) {
         console.error("Erro ao carregar status", error);
     }
+}
+
+async function formatarCampoValor() {
+    const campoValor = document.getElementById("valor");
+
+    campoValor.addEventListener("input", function() {
+
+        let valor = this.value.replace(/\D/g, "");
+
+        if(valor === "") {
+            this.value = "";
+            return;
+        }
+
+        valor = Number(valor) / 100;
+
+        this.value = valor.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        
+    });
 }
 
 function voltarPagina() {
