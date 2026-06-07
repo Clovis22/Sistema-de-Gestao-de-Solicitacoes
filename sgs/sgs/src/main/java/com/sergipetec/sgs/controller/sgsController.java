@@ -18,39 +18,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sergipetec.sgs.dtos.categoriaDTO.responseCategoriaDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.atualizarStatusDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.createSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.responseSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.responseStatusSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitanteDTO.responseSolicitanteDTO;
-import com.sergipetec.sgs.dtos.statusDTO.responseStatusDTO;
-import com.sergipetec.sgs.service.sgsService;
+import com.sergipetec.sgs.dtos.CategoriaDTO.ResponseCategoriaDTO;
+import com.sergipetec.sgs.dtos.SolicitacaoDTO.AtualizarStatusDTO;
+import com.sergipetec.sgs.dtos.SolicitacaoDTO.CreateSolicitacaoDTO;
+import com.sergipetec.sgs.dtos.SolicitacaoDTO.ResponseSolicitacaoDTO;
+import com.sergipetec.sgs.dtos.SolicitanteDTO.ResponseSolicitanteDTO;
+import com.sergipetec.sgs.dtos.StatusDTO.ResponseStatusDTO;
+import com.sergipetec.sgs.service.SgsService;
 
 @RestController
 @RequestMapping("/sgs")
-public class sgsController {
+public class SgsController {
     
     @Autowired
-    private sgsService service;
+    private SgsService service;
 
-    @PostMapping("/cadastrar")
-    public void cadastrarsSolicitacao(@RequestBody createSolicitacaoDTO objCreateSolicitacao) {
+    @PostMapping
+    public void cadastrarsSolicitacao(@RequestBody CreateSolicitacaoDTO objCreateSolicitacao) {
         service.cadastrarSolicitacao(objCreateSolicitacao);
     }
 
     @GetMapping("/{id}")
-    public responseSolicitacaoDTO buscarPorId(@PathVariable Integer id) {
+    public ResponseSolicitacaoDTO buscarPorId(@PathVariable Integer id) {
         return service.buscarPorId(id);
     }
 
-    @GetMapping("/solicitacaoId/{id}")
-    public responseStatusSolicitacaoDTO buscarStatusPorIdSolicitacao(@PathVariable Integer id) {
-       return service.buscarStatusPorIdSolicitacao(id);
-    }
-
     @GetMapping("/status/categoria/data")
-    public List<responseSolicitacaoDTO> buscarPorFiltro(
+    public List<ResponseSolicitacaoDTO> buscarPorFiltro(
 
         @RequestParam(required = false) String status,
         @RequestParam(required = false) String categoria,
@@ -67,7 +61,7 @@ public class sgsController {
     
     @GetMapping("/listar")
     public ResponseEntity<?> listarSolicitacoes() {
-        List<responseSolicitacaoDTO> listarSolicitacoes = service.listarSolicitacoes();
+        List<ResponseSolicitacaoDTO> listarSolicitacoes = service.listarSolicitacoes();
 
         Map<String, String> error = new HashMap<>();
         error.put("mensagem", "Solicitações não encontrada!");
@@ -78,22 +72,22 @@ public class sgsController {
     }
 
     @GetMapping("/listarStatus")
-    public List<responseStatusDTO> listarStatus() {
+    public List<ResponseStatusDTO> listarStatus() {
         return service.listarStatus();
     }
 
     @GetMapping("/listarCategorias")
-    public List<responseCategoriaDTO> listarCategorias() {
+    public List<ResponseCategoriaDTO> listarCategorias() {
         return service.listarCategorias();
     }
 
     @GetMapping("/listarSolicitantes")
-    public List<responseSolicitanteDTO> listarSolicitantes() {
+    public List<ResponseSolicitanteDTO> listarSolicitantes() {
         return service.listarSolicitantes();
     }
 
     @PutMapping("/status")
-    public ResponseEntity<?> atualizarStatus(@RequestBody atualizarStatusDTO objAtualizarStatus) {
+    public ResponseEntity<?> atualizarStatus(@RequestBody AtualizarStatusDTO objAtualizarStatus) {
         try {
 
             service.atualizarStatus(objAtualizarStatus);
