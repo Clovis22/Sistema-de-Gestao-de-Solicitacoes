@@ -25,10 +25,17 @@ window.onload = async () => {
         </p>
 
         <p>
-            Valor: ${s.valor}
+            Valor: ${formatarMoeda(s.valor)}
         </p>
     `;
 };
+
+function formatarMoeda(valor) {
+    return Number(valor).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
 
 function voltarPagina() {
     window.location.href = "index.html";
