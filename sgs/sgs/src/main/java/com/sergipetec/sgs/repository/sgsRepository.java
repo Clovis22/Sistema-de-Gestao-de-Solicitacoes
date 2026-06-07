@@ -3,23 +3,21 @@ package com.sergipetec.sgs.repository;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.sergipetec.sgs.dtos.categoriaDTO.responseCategoriaDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.createSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.responseSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.responseStatusSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitanteDTO.responseSolicitanteDTO;
-import com.sergipetec.sgs.dtos.statusDTO.responseStatusDTO;
+import com.sergipetec.sgs.dtos.CategoriaDTO.ResponseCategoriaDTO;
+import com.sergipetec.sgs.dtos.SolicitacaoDTO.CreateSolicitacaoDTO;
+import com.sergipetec.sgs.dtos.SolicitacaoDTO.ResponseSolicitacaoDTO;
+import com.sergipetec.sgs.dtos.SolicitanteDTO.ResponseSolicitanteDTO;
+import com.sergipetec.sgs.dtos.StatusDTO.ResponseStatusDTO;
 
-public interface sgsRepository {
+public interface SgsRepository {
     
-    public void cadastrarSolicitacao(createSolicitacaoDTO requestSolicitacao);
-    public responseSolicitacaoDTO buscarPorId(Integer id);
-    public responseStatusSolicitacaoDTO buscarStatusPorIdSolicitacao(Integer id);
-    public List<responseSolicitacaoDTO> buscarPorFiltro(String status, String categoria, LocalDate dataInicial, LocalDate dataFinal);
-    public List<responseSolicitacaoDTO> listarSolicitacoes();
-    public List<responseStatusDTO> listarStatus();
-    public List<responseCategoriaDTO> listarCategorias();
-    public List<responseSolicitanteDTO> listarSolicitantes();
+    public void cadastrarSolicitacao(CreateSolicitacaoDTO requestSolicitacao);
+    public ResponseSolicitacaoDTO buscarPorId(Integer id);
+    public List<ResponseSolicitacaoDTO> buscarPorFiltro(String status, String categoria, LocalDate dataInicial, LocalDate dataFinal);
+    public List<ResponseSolicitacaoDTO> listarSolicitacoes();
+    public List<ResponseStatusDTO> listarStatus();
+    public List<ResponseCategoriaDTO> listarCategorias();
+    public List<ResponseSolicitanteDTO> listarSolicitantes();
     public void atualizarStatus(Integer id, Integer statusId);
 
 }

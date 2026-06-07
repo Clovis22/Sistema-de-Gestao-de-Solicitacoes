@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class solicitante {
+public class Solicitante {
 
     private Integer id;
     private String nome;

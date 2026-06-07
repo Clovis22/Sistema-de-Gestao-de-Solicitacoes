@@ -1,7 +1,7 @@
 package com.sergipetec.sgs.dtos;
 
-public record categoriaDTO() {
+public record CategoriaDTO() {
 
-    public record responseCategoriaDTO(Integer id, String nome){}
+    public record ResponseCategoriaDTO(Integer id, String nome){}
     
 }

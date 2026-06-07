@@ -1,7 +1,7 @@
 package com.sergipetec.sgs.dtos;
 
-public record solicitanteDTO() {
+public record SolicitanteDTO() {
 
-    public record responseSolicitanteDTO(Integer id, String nome){}
+    public record ResponseSolicitanteDTO(Integer id, String nome){}
 
 }

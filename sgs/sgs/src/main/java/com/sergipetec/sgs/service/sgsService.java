@@ -6,54 +6,49 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sergipetec.sgs.dtos.categoriaDTO.responseCategoriaDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.atualizarStatusDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.createSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.responseSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.responseStatusSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitanteDTO.responseSolicitanteDTO;
-import com.sergipetec.sgs.dtos.statusDTO.responseStatusDTO;
-import com.sergipetec.sgs.persistence.sgsJDBC;
+import com.sergipetec.sgs.dtos.CategoriaDTO.ResponseCategoriaDTO;
+import com.sergipetec.sgs.dtos.SolicitacaoDTO.AtualizarStatusDTO;
+import com.sergipetec.sgs.dtos.SolicitacaoDTO.CreateSolicitacaoDTO;
+import com.sergipetec.sgs.dtos.SolicitacaoDTO.ResponseSolicitacaoDTO;
+import com.sergipetec.sgs.dtos.SolicitanteDTO.ResponseSolicitanteDTO;
+import com.sergipetec.sgs.dtos.StatusDTO.ResponseStatusDTO;
+import com.sergipetec.sgs.persistence.SgsJDBC;
 
 @Service
-public class sgsService {
+public class SgsService {
     
     @Autowired
-    private sgsJDBC repositoryJdbc;
+    private SgsJDBC repositoryJdbc;
 
-    public void cadastrarSolicitacao(createSolicitacaoDTO objCreateSolicitacao) {
+    public void cadastrarSolicitacao(CreateSolicitacaoDTO objCreateSolicitacao) {
         repositoryJdbc.cadastrarSolicitacao(objCreateSolicitacao);
     }
 
-    public responseSolicitacaoDTO buscarPorId(Integer id) {
+    public ResponseSolicitacaoDTO buscarPorId(Integer id) {
        return repositoryJdbc.buscarPorId(id);
     }
 
-    public responseStatusSolicitacaoDTO buscarStatusPorIdSolicitacao(Integer id) {
-       return repositoryJdbc.buscarStatusPorIdSolicitacao(id);
-    }
-
-    public List<responseSolicitacaoDTO> buscarPorFiltro(String status, String categoria, LocalDate dataInicial, LocalDate dataFinal) {
+    public List<ResponseSolicitacaoDTO> buscarPorFiltro(String status, String categoria, LocalDate dataInicial, LocalDate dataFinal) {
        return repositoryJdbc.buscarPorFiltro(status, categoria, dataInicial, dataFinal);
     }
 
-    public List<responseSolicitacaoDTO> listarSolicitacoes() {
+    public List<ResponseSolicitacaoDTO> listarSolicitacoes() {
         return repositoryJdbc.listarSolicitacoes();
     }
 
-    public List<responseStatusDTO> listarStatus() {
+    public List<ResponseStatusDTO> listarStatus() {
         return repositoryJdbc.listarStatus();
     }
 
-    public List<responseCategoriaDTO> listarCategorias() {
+    public List<ResponseCategoriaDTO> listarCategorias() {
         return repositoryJdbc.listarCategorias();
     }
 
-    public List<responseSolicitanteDTO> listarSolicitantes() {
+    public List<ResponseSolicitanteDTO> listarSolicitantes() {
         return repositoryJdbc.listarSolicitantes();
     }
 
-    public void atualizarStatus(atualizarStatusDTO objAtualizarStatus) {
+    public void atualizarStatus(AtualizarStatusDTO objAtualizarStatus) {
         repositoryJdbc.atualizarStatus(objAtualizarStatus.id(), objAtualizarStatus.statusId());
     }
 

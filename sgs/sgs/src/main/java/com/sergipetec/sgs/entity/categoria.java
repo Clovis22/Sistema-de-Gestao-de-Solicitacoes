@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class categoria {
+public class Categoria {
     
     private Integer id;
     private String nome;

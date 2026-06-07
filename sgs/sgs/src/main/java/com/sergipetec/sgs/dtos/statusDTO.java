@@ -1,7 +1,7 @@
 package com.sergipetec.sgs.dtos;
 
-public record statusDTO() {
+public record StatusDTO() {
 
-    public record responseStatusDTO(Integer id, String descricao){}
+    public record ResponseStatusDTO(Integer id, String descricao){}
 
 }

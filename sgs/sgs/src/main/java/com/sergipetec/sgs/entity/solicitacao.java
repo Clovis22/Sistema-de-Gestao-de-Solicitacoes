@@ -11,12 +11,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class solicitacao {
+public class Solicitacao {
     
     private Integer id;
-    private solicitante solicitante;
-    private categoria categoria;
-    private status status;
+    private Solicitante solicitante;
+    private Categoria categoria;
+    private Status status;
     private String descricao;
     private Float valor; 
     private Date data_solicitacao;

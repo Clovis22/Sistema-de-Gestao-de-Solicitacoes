@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class status {
+public class Status {
 
     private Integer id;
     private String descricao;

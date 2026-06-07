@@ -12,28 +12,28 @@ import org.springframework.lang.NonNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.sergipetec.sgs.dtos.categoriaDTO.responseCategoriaDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.createSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.responseSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitacaoDTO.responseStatusSolicitacaoDTO;
-import com.sergipetec.sgs.dtos.solicitanteDTO.responseSolicitanteDTO;
-import com.sergipetec.sgs.dtos.statusDTO.responseStatusDTO;
-import com.sergipetec.sgs.repository.sgsRepository;
-import com.sergipetec.sgs.entity.categoria;
-import com.sergipetec.sgs.entity.solicitacao;
-import com.sergipetec.sgs.entity.solicitante;
-import com.sergipetec.sgs.entity.status;
+import com.sergipetec.sgs.dtos.CategoriaDTO.ResponseCategoriaDTO;
+import com.sergipetec.sgs.dtos.SolicitacaoDTO.CreateSolicitacaoDTO;
+import com.sergipetec.sgs.dtos.SolicitacaoDTO.ResponseSolicitacaoDTO;
+import com.sergipetec.sgs.dtos.SolicitanteDTO.ResponseSolicitanteDTO;
+import com.sergipetec.sgs.dtos.StatusDTO.ResponseStatusDTO;
+import com.sergipetec.sgs.repository.SgsRepository;
+import com.sergipetec.sgs.utils.NumericUtils;
+import com.sergipetec.sgs.entity.Categoria;
+import com.sergipetec.sgs.entity.Solicitacao;
+import com.sergipetec.sgs.entity.Solicitante;
+import com.sergipetec.sgs.entity.Status;
 
 @Repository
-public class sgsJDBC implements sgsRepository {
+public class SgsJDBC implements SgsRepository {
 
     private JdbcTemplate jdbcTemplate;
 
-    public sgsJDBC(JdbcTemplate jdbcTemplate) {
+    public SgsJDBC(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void cadastrarSolicitacao(createSolicitacaoDTO requestSolicitacao) {
+    public void cadastrarSolicitacao(CreateSolicitacaoDTO requestSolicitacao) {
 
         String query = "insert into public.solicitacao (" +
                             "solicitante_id, " +
@@ -55,7 +55,7 @@ public class sgsJDBC implements sgsRepository {
 
     }
     
-    public responseSolicitacaoDTO buscarPorId(Integer id) {
+    public ResponseSolicitacaoDTO buscarPorId(Integer id) {
 
         String query = "select s.id, st.nome as NomeSolicitante, st.cpfcnpj, c.nome as NomeCategoria, stt.descricao as Status, valor from public.solicitacao s " +
                        "inner join public.solicitante st on st.id = s.solicitante_id " +
@@ -63,24 +63,24 @@ public class sgsJDBC implements sgsRepository {
                        "inner join public.status stt on stt.id = s.status_id " +
                        "where s.id = ? ";
 
-        solicitacao objQuerySolicitacao = jdbcTemplate.queryForObject(
+        Solicitacao objQuerySolicitacao = jdbcTemplate.queryForObject(
             query,
-            new RowMapper<solicitacao>() {
+            new RowMapper<Solicitacao>() {
                 @Override
-                public solicitacao mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
+                public Solicitacao mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
 
-                    solicitacao objSolicitacao = new solicitacao();
+                    Solicitacao objSolicitacao = new Solicitacao();
 
                     objSolicitacao.setId(rs.getInt("id"));
 
                     // solicitante
-                    solicitante objSolicitante = new solicitante(null, rs.getString("nomeSolicitante"), rs.getString("cpfcnpj"));
+                    Solicitante objSolicitante = new Solicitante(null, rs.getString("nomeSolicitante"), rs.getString("cpfcnpj"));
 
                     //categoria
-                    categoria objCategoria = new categoria(null, rs.getString("nomeCategoria"));
+                    Categoria objCategoria = new Categoria(null, rs.getString("nomeCategoria"));
 
                     // status
-                    status objStatus = new status(null, rs.getString("Status"));
+                    Status objStatus = new Status(null, rs.getString("Status"));
 
                     objSolicitacao.setSolicitante(objSolicitante);
                     objSolicitacao.setCategoria(objCategoria);
@@ -100,7 +100,7 @@ public class sgsJDBC implements sgsRepository {
         }
 
         // conversão Entity -> DTO
-        return new responseSolicitacaoDTO(
+        return new ResponseSolicitacaoDTO(
             objQuerySolicitacao.getId(),
             objQuerySolicitacao.getSolicitante().getNome(),
             objQuerySolicitacao.getSolicitante().getCpfcnpj(),
@@ -111,47 +111,7 @@ public class sgsJDBC implements sgsRepository {
         
     }
 
-    public responseStatusSolicitacaoDTO buscarStatusPorIdSolicitacao(Integer id) {
-
-        String query = "select s.id, stt.descricao as Status, valor from public.solicitacao s " +
-                       "inner join public.status stt on stt.id = s.status_id " +
-                       "where s.id = ? ";
-
-        solicitacao objQuerySolicitacao = jdbcTemplate.queryForObject(
-            query,
-            new RowMapper<solicitacao>() {
-                @Override
-                public solicitacao mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
-
-                    solicitacao objSolicitacao = new solicitacao();
-
-                    objSolicitacao.setId(rs.getInt("id"));
-
-                    // status
-                    status objStatus = new status(null, rs.getString("Status"));
-
-                    objSolicitacao.setStatus(objStatus);
-
-                    return objSolicitacao;
-
-                }
-            },
-            id
-        );
-
-        if (objQuerySolicitacao == null) {
-            throw new RuntimeException("Solicitação não encontrada!");
-        }
-
-        // conversão Entity -> DTO
-        return new responseStatusSolicitacaoDTO(
-            objQuerySolicitacao.getId(),
-            objQuerySolicitacao.getStatus().getDescricao()
-        );
-        
-    }
-
-    public List<responseSolicitacaoDTO> listarSolicitacoes() {
+    public List<ResponseSolicitacaoDTO> listarSolicitacoes() {
 
         String query = "select s.id, st.nome as NomeSolicitante, st.cpfcnpj, c.nome as NomeCategoria, stt.descricao as Status, valor from public.solicitacao s " +
                        "inner join public.solicitante st on st.id = s.solicitante_id " +
@@ -159,24 +119,24 @@ public class sgsJDBC implements sgsRepository {
                        "inner join public.status stt on stt.id = s.status_id " +
                        "order by s.data_solicitacao desc";
 
-        List<solicitacao> objQuerySolicitacoes = jdbcTemplate.query(
+        List<Solicitacao> objQuerySolicitacoes = jdbcTemplate.query(
             query,
-            new RowMapper<solicitacao>() {
+            new RowMapper<Solicitacao>() {
                 @Override
-                public solicitacao mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
+                public Solicitacao mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
 
-                    solicitacao objSolicitacao = new solicitacao();
+                    Solicitacao objSolicitacao = new Solicitacao();
 
                     objSolicitacao.setId(rs.getInt("id"));
 
                     // solicitante
-                    solicitante objSolicitante = new solicitante(null, rs.getString("nomeSolicitante"), rs.getString("cpfcnpj"));
+                    Solicitante objSolicitante = new Solicitante(null, rs.getString("nomeSolicitante"), rs.getString("cpfcnpj"));
 
                     //categoria
-                    categoria objCategoria = new categoria(null, rs.getString("nomeCategoria"));
+                    Categoria objCategoria = new Categoria(null, rs.getString("nomeCategoria"));
 
                     // status
-                    status objStatus = new status(null, rs.getString("Status"));
+                    Status objStatus = new Status(null, rs.getString("Status"));
 
                     objSolicitacao.setSolicitante(objSolicitante);
                     objSolicitacao.setCategoria(objCategoria);
@@ -192,7 +152,7 @@ public class sgsJDBC implements sgsRepository {
 
         // conversão Entity -> DTO
         return objQuerySolicitacoes.stream()
-            .map(s -> new responseSolicitacaoDTO(
+            .map(s -> new ResponseSolicitacaoDTO(
                  s.getId(),
                  s.getSolicitante().getNome(),
                  s.getSolicitante().getCpfcnpj(),
@@ -204,16 +164,16 @@ public class sgsJDBC implements sgsRepository {
 
     }
 
-    public List<responseStatusDTO> listarStatus() {
+    public List<ResponseStatusDTO> listarStatus() {
         String query = "select id, descricao from public.status";
 
-        List<status> objQueryStatus = jdbcTemplate.query(
+        List<Status> objQueryStatus = jdbcTemplate.query(
             query,
-            new RowMapper<status>() {
+            new RowMapper<Status>() {
                 @Override
-                public status mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
+                public Status mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
 
-                    status objStatus = new status();
+                    Status objStatus = new Status();
 
                     objStatus.setId(rs.getInt("id"));
 
@@ -231,23 +191,23 @@ public class sgsJDBC implements sgsRepository {
 
         // conversão Entity -> DTO
         return objQueryStatus.stream()
-            .map(s -> new responseStatusDTO(
+            .map(s -> new ResponseStatusDTO(
                  s.getId(),
                  s.getDescricao()
             )
         ).toList();
     }
 
-    public List<responseCategoriaDTO> listarCategorias() {
+    public List<ResponseCategoriaDTO> listarCategorias() {
         String query = "select id, nome from public.categoria";
 
-        List<categoria> objQueryCategoria = jdbcTemplate.query(
+        List<Categoria> objQueryCategoria = jdbcTemplate.query(
             query,
-            new RowMapper<categoria>() {
+            new RowMapper<Categoria>() {
                 @Override
-                public categoria mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
+                public Categoria mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
 
-                    categoria objCategoria = new categoria();
+                    Categoria objCategoria = new Categoria();
 
                     objCategoria.setId(rs.getInt("id"));
 
@@ -265,23 +225,23 @@ public class sgsJDBC implements sgsRepository {
 
         // conversão Entity -> DTO
         return objQueryCategoria.stream()
-            .map(s -> new responseCategoriaDTO(
+            .map(s -> new ResponseCategoriaDTO(
                  s.getId(),
                  s.getNome()
             )
         ).toList();
     }
 
-    public List<responseSolicitanteDTO> listarSolicitantes() {
+    public List<ResponseSolicitanteDTO> listarSolicitantes() {
         String query = "select id, nome from public.solicitante";
 
-        List<solicitante> objQuerySolicitante = jdbcTemplate.query(
+        List<Solicitante> objQuerySolicitante = jdbcTemplate.query(
             query,
-            new RowMapper<solicitante>() {
+            new RowMapper<Solicitante>() {
                 @Override
-                public solicitante mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
+                public Solicitante mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
 
-                    solicitante objSolicitante = new solicitante();
+                    Solicitante objSolicitante = new Solicitante();
 
                     objSolicitante.setId(rs.getInt("id"));
 
@@ -299,14 +259,14 @@ public class sgsJDBC implements sgsRepository {
 
         // conversão Entity -> DTO
         return objQuerySolicitante.stream()
-            .map(s -> new responseSolicitanteDTO(
+            .map(s -> new ResponseSolicitanteDTO(
                  s.getId(),
                  s.getNome()
             )
         ).toList();
     }
 
-    public List<responseSolicitacaoDTO> buscarPorFiltro(String status, String categoria, LocalDate dataInicial, LocalDate dataFinal) {
+    public List<ResponseSolicitacaoDTO> buscarPorFiltro(String status, String categoria, LocalDate dataInicial, LocalDate dataFinal) {
 
         StringBuilder query = new StringBuilder();
 
@@ -323,8 +283,10 @@ public class sgsJDBC implements sgsRepository {
         String queryBuscarStatusPorId = "select descricao from public.status "+
                                         "where id = ?";
 
+        NumericUtils numericUtils = new NumericUtils();
+
         String statusAux = null;
-        if(isNumeric(status)) {
+        if(numericUtils.isNumeric(status)) {
            statusAux = jdbcTemplate.queryForObject(
                 queryBuscarStatusPorId,
                 String.class,
@@ -337,7 +299,7 @@ public class sgsJDBC implements sgsRepository {
                                            "where id = ?";
 
         String categoriaAux = null;
-         if(isNumeric(categoria)) {
+         if(numericUtils.isNumeric(categoria)) {
             categoriaAux = jdbcTemplate.queryForObject(
                 queryBuscarCategoriaPorId,
                 String.class,
@@ -374,24 +336,24 @@ public class sgsJDBC implements sgsRepository {
         query.append(" order by s.data_solicitacao desc ");
         String sqlQuery = Objects.requireNonNull(query.toString());
         
-        List<solicitacao> listaSolicitacoes = jdbcTemplate.query(
+        List<Solicitacao> listaSolicitacoes = jdbcTemplate.query(
             sqlQuery,
-            new RowMapper<solicitacao>() {
+            new RowMapper<Solicitacao>() {
                 @Override
-                public solicitacao mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
+                public Solicitacao mapRow(@NonNull ResultSet rs, int numeroLinhas) throws SQLException {
 
-                    solicitacao objSolicitacao = new solicitacao();
+                    Solicitacao objSolicitacao = new Solicitacao();
 
                     objSolicitacao.setId(rs.getInt("id"));
 
                     // solicitante
-                    solicitante objSolicitante = new solicitante(null, rs.getString("NomeSolicitante"), rs.getString("cpfcnpj"));
+                    Solicitante objSolicitante = new Solicitante(null, rs.getString("NomeSolicitante"), rs.getString("cpfcnpj"));
 
                     // categoria 
-                    categoria objCategoria = new categoria(null, rs.getString("NomeCategoria"));
+                    Categoria objCategoria = new Categoria(null, rs.getString("NomeCategoria"));
 
                     // status
-                    status objStatus = new status(null, rs.getString("Status"));
+                    Status objStatus = new Status(null, rs.getString("Status"));
 
                     // monta entity
                     objSolicitacao.setSolicitante(objSolicitante);
@@ -407,7 +369,7 @@ public class sgsJDBC implements sgsRepository {
 
         // conversão Entity -> DTO
         return listaSolicitacoes.stream()
-            .map(s -> new responseSolicitacaoDTO(
+            .map(s -> new ResponseSolicitacaoDTO(
                  s.getId(),
                  s.getSolicitante().getNome(),
                  s.getSolicitante().getCpfcnpj(),
@@ -499,15 +461,5 @@ public class sgsJDBC implements sgsRepository {
             id
         );
     } 
-    
-    public static boolean isNumeric(String value) {
-        if(value == null) return false;
-        try {
-            Double.parseDouble(value);
-            return true;
-        } catch(NumberFormatException e) {
-            return false;
-        }
-    }
 
 }
