@@ -1,7 +1,12 @@
 window.onload = async () => {
     const navegacao = performance.getEntriesByType("navigation");
-    if(navegacao.length > 0 && navegacao[0].type === "reload")
-       sessionStorage.clear();
+    const origemButton = sessionStorage.getItem("origemButton");
+    
+    if((navegacao.length > 0 || navegacao[0].type === "reload" || navegacao[0].type === "navigate") && 
+       (origemButton !== "detalhes" && origemButton !== "cadastro"))
+        sessionStorage.clear();
+       
+    sessionStorage.setItem("origemButton", "");
 
     await carregarStatus();
     await carregarCategorias();
@@ -30,6 +35,7 @@ window.onload = async () => {
 };
 
 function irParaCadastro() {
+    sessionStorage.setItem("origemButton", "cadastro");
     window.location.href = "cadastro.html";
 }
 
@@ -134,7 +140,7 @@ async function montarTabela(lista) {
                     </select>
                 </td>
 
-                <td>${s.valor}</td>
+                <td>${formatarMoeda(s.valor)}</td>
 
                 <td>
 
@@ -174,10 +180,6 @@ async function filtrar() {
 }
 
 async function alterarStatus(id, statusId) {
-    const response = await fetch(`${API}/solicitacaoId/${id}`);
-
-    const s = await response.json();
-    
     const responseAtualizarStatus = await fetch(`${API}/status`, {
         method: "PUT",
         headers: {
@@ -195,6 +197,14 @@ async function alterarStatus(id, statusId) {
     listarSolicitacoes();
 }
 
+function formatarMoeda(valor) {
+    return Number(valor).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
 function detalhes(id) {
+    sessionStorage.setItem("origemButton", "detalhes");
     window.location.href = `detalhes.html?id=${id}`;
 }
